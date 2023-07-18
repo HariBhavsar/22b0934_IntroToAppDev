@@ -1,92 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:bruh/tests/sources/home.dart';
+import 'package:bruh/tests/sources/expenses.dart';
 
-void main() {
-  runApp(CounterApp());
+void main() => runApp(const BudgetTrackerApp());
+
+class BudgetTrackerApp extends StatefulWidget {
+  const BudgetTrackerApp({Key? key}) : super(key: key);
+
+  @override
+  State<BudgetTrackerApp> createState() => _BudgetTrackerAppState();
 }
 
-class CounterApp extends StatelessWidget {
+class _BudgetTrackerAppState extends State<BudgetTrackerApp> {
+  int budget = 50000;
+  List<Item> items = [];
+
+  void updateBudget(List<Item> updatedItems) {
+    int totalCost = 0;
+    for (var item in updatedItems) {
+      totalCost += item.price;
+    }
+    setState(() {
+      budget = 50000 - totalCost;
+      items = updatedItems;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Counter App',
+      title: 'Budget Tracker',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.purple,
       ),
-      home: CounterPage(),
-    );
-  }
-}
-
-class CounterPage extends StatefulWidget {
-  @override
-  _CounterPageState createState() => _CounterPageState();
-}
-
-class _CounterPageState extends State<CounterPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Counter App'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Counter Value:',
-              style: TextStyle(fontSize: 20),
-            ),
-            Text(
-              '$_counter',
-              style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green),
-            ),
-          ],
+      initialRoute: '/',
+      routes: {
+        '/': (context) => Home(budget: budget),
+        '/expenses': (context) => Expenses(
+          items: items,
+          updateBudget: updateBudget,
+          budget: budget,
         ),
-      ),
-      /*floatingActionButton: FloatingActionButton(
-        onPressed: _decrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-      floatingActionButton: FloatingActionButton(
-      onPressed: _decrementCounter,
-        tooltip: 'Decrement',
-        child: Icon(Icons.add),
-      ),
-      */
-      floatingActionButton: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          FloatingActionButton(
-            onPressed: _incrementCounter,
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
-          ),
-          FloatingActionButton(
-            onPressed: _decrementCounter,
-            tooltip: 'Decrement',
-            child: Icon(Icons.remove),
-          ),
-        ],
-      ),
+      },
     );
   }
 }
